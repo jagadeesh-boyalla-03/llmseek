@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI JOB HUNTER – Jarvis Autonomous Command Center</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .pulse-glow { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .7; transform: scale(1.05); } }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-20 md:pb-6">
+
+  <!-- TOP HEADER -->
+  <header class="glass sticky top-0 z-50 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+        <i class="fa-solid fa-robot text-lg"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-base md:text-lg leading-tight tracking-tight flex items-center gap-2">
+          AI JOB HUNTER <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">90+ ATS AGENT</span>
+        </h1>
+        <p class="text-xs text-slate-400">Candidate: <strong class="text-slate-200">Candidate</strong> (Fresher IT)</p>
+      </div>
+    </div>
+    
+    <!-- AGENT CONTROLS -->
+    <div class="flex items-center space-x-2">
+      <button onclick="triggerSampleTestCall()" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-500/20 flex items-center gap-1.5 transition active:scale-95" title="Call Verified Mobile">
+        <i class="fa-solid fa-phone"></i> Test Call
+      </button>
+      <div id="agent-status-badge" class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="agent-status-text">RUNNING</span>
+      </div>
+      <button onclick="toggleAgentPause()" id="agent-pause-btn" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition" title="Pause / Resume">
+        <i class="fa-solid fa-pause"></i>
+      </button>
+      <button onclick="emergencyStop()" class="p-2 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 text-xs border border-rose-500/30 transition" title="Emergency Stop">
+        <i class="fa-solid fa-hand"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto p-4 space-y-6">
+
+    <!-- DESKTOP / TABLET NAV TABS -->
+    <div class="hidden md:flex space-x-2 p-1.5 bg-slate-900/80 rounded-xl border border-slate-800 overflow-x-auto">
+      <button onclick="switchTab('dashboard')" class="tab-btn active px-3.5 py-2 rounded-lg text-sm font-medium transition" data-tab="dashboard">
+        <i class="fa-solid fa-chart-pie mr-1.5 text-blue-400"></i>Dashboard
+      </button>
+      <button onclick="switchTab('jarvis')" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition" data-tab="jarvis">
+        <i class="fa-solid fa-microphone-lines mr-1.5 text-indigo-400"></i>Jarvis Voice
+      </button>
+      <button onclick="switchTab('jobs')" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition" data-tab="jobs">
+        <i class="fa-solid fa-briefcase mr-1.5 text-emerald-400"></i>Job Discovery
+      </button>
+      <button onclick="switchTab('resumes')" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition" data-tab="resumes">
+        <i class="fa-solid fa-file-invoice mr-1.5 text-purple-400"></i>Resume & 90+ ATS
+      </button>
+      <button onclick="switchTab('templates')" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition" data-tab="templates">
+        <i class="fa-solid fa-shapes mr-1.5 text-amber-400"></i>Template Manager
+      </button>
+      <button onclick="switchTab('applications')" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition" data-tab="applications">
+        <i class="fa-solid fa-paper-plane mr-1.5 text-sky-400"></i>Applications & Tracking
+      </button>
+      <button onclick="switchTab('approvals')" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition" data-tab="approvals">
+        <i class="fa-solid fa-shield-halved mr-1.5 text-rose-400"></i>Approvals
+      </button>
+      <button onclick="switchTab('sources')" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition" data-tab="sources">
+        <i class="fa-solid fa-network-wired mr-1.5 text-teal-400"></i>Sources
+      </button>
+      <button onclick="switchTab('settings')" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition" data-tab="settings">
+        <i class="fa-solid fa-sliders mr-1.5 text-slate-400"></i>Settings
+      </button>
+    </div>
+
+    <!-- TAB: DASHBOARD -->
+    <section id="tab-dashboard" class="tab-pane space-y-6">
+      
+      <!-- STAT CARDS -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+        <div class="glass p-4 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+            <span>Collected Jobs</span>
+            <i class="fa-solid fa-database text-blue-400"></i>
+          </div>
+          <div class="text-2xl font-bold" id="stat-total-jobs">5</div>
+          <div class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
+            <i class="fa-solid fa-check"></i> <span id="stat-fresher-jobs">5</span> Fresher Eligible
+          </div>
+        </div>
+
+        <div class="glass p-4 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+            <span>ATS Target Range</span>
+            <i class="fa-solid fa-shield-check text-purple-400"></i>
+          </div>
+          <div class="text-2xl font-bold text-purple-400">85–95</div>
+          <div class="text-[11px] text-slate-300 mt-1">Optimal ATS Window</div>
+        </div>
+
+        <div class="glass p-4 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+            <span>Applications Tracker</span>
+            <i class="fa-solid fa-paper-plane text-sky-400"></i>
+          </div>
+          <div class="text-2xl font-bold" id="stat-applications">0</div>
+          <div class="text-[11px] text-amber-400 mt-1 flex items-center gap-1">
+            <i class="fa-solid fa-clock"></i> <span id="stat-pending-approvals">0</span> Pending Review
+          </div>
+        </div>
+
+        <div class="glass p-4 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+            <span>Interviews & Offers</span>
+            <i class="fa-solid fa-trophy text-amber-400"></i>
+          </div>
+          <div class="text-2xl font-bold text-amber-300" id="stat-interviews">0</div>
+          <div class="text-[11px] text-emerald-400 mt-1">Confirmed Submissions</div>
+        </div>
+      </div>
+
+      <!-- SAFETY & MODE BANNER -->
+      <div class="glass p-4 rounded-2xl border border-blue-500/20 bg-blue-950/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-phone-volume text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-semibold text-sm">Autonomous Phone Tracking & Auto-Apply Active</h3>
+            <p class="text-xs text-slate-400">Auto-monitors Telegram/WhatsApp/LinkedIn, prepares 85–95 ATS resumes, auto-applies, emails resume PDF, and initiates a voice call summary (Role, LPA, Bond).</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="triggerPhoneAutoApplyCycle()" id="phone-auto-apply-btn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-xs font-bold text-white shadow-lg shadow-emerald-500/30 flex items-center gap-2 transition active:scale-95">
+            <i class="fa-solid fa-bolt"></i> Auto-Apply from Channels Now
+          </button>
+        </div>
+      </div>
+
+      <!-- QUICK JARVIS BAR -->
+      <div class="glass p-4 rounded-2xl border border-indigo-500/20">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Speak or type a command to Jarvis
+          </span>
+          <button onclick="switchTab('jarvis')" class="text-xs text-indigo-300 hover:underline">Full Jarvis Screen &rarr;</button>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="text" id="quick-cmd-input" placeholder="e.g. 'Search for Python fresher jobs' or 'Evaluate resume for Cognizant'" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+          <button onclick="triggerVoiceInput('quick-cmd-input')" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-400 transition" title="Voice Input">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <button onclick="sendQuickCommand()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-sm transition">
+            Send
+          </button>
+        </div>
+      </div>
+
+      <!-- RECENT JOBS PREVIEW -->
+      <div class="glass p-5 rounded-2xl border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm flex items-center gap-2">
+            <i class="fa-solid fa-bolt text-amber-400"></i> Top Fresher IT Opportunities
+          </h3>
+          <button onclick="switchTab('jobs')" class="text-xs text-blue-400 hover:underline">View All &rarr;</button>
+        </div>
+        <div id="dashboard-jobs-list" class="space-y-2">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: JARVIS VOICE & TEXT COMMAND CENTER -->
+    <section id="tab-jarvis" class="tab-pane hidden space-y-6">
+      <div class="glass p-6 rounded-3xl border border-indigo-500/30 bg-gradient-to-b from-indigo-950/20 to-slate-900/60 text-center space-y-4">
+        <div class="inline-block relative">
+          <div id="jarvis-pulse-ring" class="w-24 h-24 rounded-full bg-indigo-500/20 absolute -inset-2 rounded-full filter blur-md"></div>
+          <button id="jarvis-mic-btn" onclick="toggleJarvisVoice()" class="relative w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 to-blue-500 hover:from-indigo-500 hover:to-blue-400 flex items-center justify-center text-white text-3xl shadow-xl shadow-indigo-500/40 transition active:scale-95">
+            <i id="jarvis-mic-icon" class="fa-solid fa-microphone"></i>
+          </button>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold">ASK AI JOB HUNTER – JARVIS</h2>
+          <p id="jarvis-status-label" class="text-xs text-slate-400 mt-1">Tap microphone to speak or type below. Jarvis speaks responses directly through your phone/laptop speaker.</p>
+        </div>
+
+        <div id="transcription-box" class="hidden max-w-xl mx-auto p-3 rounded-xl bg-slate-900 border border-indigo-500/40 text-xs text-indigo-300">
+          <span class="font-semibold">Heard:</span> <span id="transcription-text">...</span>
+        </div>
+
+        <div class="max-w-2xl mx-auto flex items-center gap-2">
+          <input type="text" id="jarvis-text-input" placeholder="Type command: 'Generate 90+ resume for Cognizant', 'Apply for Python roles', etc." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500">
+          <button onclick="sendJarvisCommand()" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shrink-0 flex items-center gap-1.5">
+            <i class="fa-solid fa-paper-plane"></i> Execute
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs">
+          <button onclick="fillCommand('Search for Python fresher jobs')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300">"Search Python fresher jobs"</button>
+          <button onclick="fillCommand('Check whether I am eligible')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300">"Check eligibility"</button>
+          <button onclick="fillCommand('Generate resume for this job')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300">"Generate 90+ resume"</button>
+          <button onclick="fillCommand('Show my pending applications')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300">"Show pending applications"</button>
+        </div>
+      </div>
+
+      <div class="glass p-5 rounded-2xl border border-slate-800 space-y-3">
+        <h3 class="font-bold text-sm flex items-center justify-between">
+          <span><i class="fa-solid fa-clock-rotate-left mr-2 text-indigo-400"></i>Jarvis Activity & Task History</span>
+          <button onclick="clearJarvisLog()" class="text-xs text-slate-400 hover:text-slate-200">Clear</button>
+        </h3>
+        <div id="jarvis-chat-stream" class="space-y-3 max-h-96 overflow-y-auto pr-1">
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
+            <div class="flex items-center justify-between text-indigo-400 font-semibold mb-1">
+              <span><i class="fa-solid fa-robot mr-1"></i> Jarvis System</span>
+              <span class="text-[10px] text-slate-500">Just now</span>
+            </div>
+            <p class="text-slate-300">Ready. Master profile loaded with verified skills and projects. Strict ATS rule active.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: JOB DISCOVERY -->
+    <section id="tab-jobs" class="tab-pane hidden space-y-6">
+      <div class="glass p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div class="flex-1 flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2">
+          <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm"></i>
+          <input type="text" id="job-search-input" oninput="debounceLoadJobs()" placeholder="Search company, title, or skills..." class="w-full bg-transparent text-sm focus:outline-none">
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+            <input type="checkbox" id="fresher-only-filter" checked onchange="loadJobs()" class="rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-0">
+            <span>Fresher Only (0-2 YOE)</span>
+          </label>
+          <button onclick="showImportModal()" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-plus"></i> Import Job Post / URL
+          </button>
+        </div>
+      </div>
+
+      <div id="jobs-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB: RESUME CENTER & 90+ ATS DASHBOARD -->
+    <section id="tab-resumes" class="tab-pane hidden space-y-6">
+      
+      <!-- MASTER RESUME UPLOAD CARD -->
+      <div class="glass p-5 rounded-2xl border border-purple-500/20 bg-purple-950/10 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="font-bold text-sm text-purple-300 flex items-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Master Resume Upload & Verification
+            </h3>
+            <p class="text-xs text-slate-400">Upload PDF, DOCX, or TXT. The parser extracts facts and prompts for verification without overwriting.</p>
+          </div>
+          <div>
+            <label class="cursor-pointer px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-xs text-white flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-upload"></i> Upload Master Resume
+              <input type="file" id="master-file-input" onchange="handleMasterResumeUpload(this)" accept=".pdf,.docx,.txt" class="hidden">
+            </label>
+          </div>
+        </div>
+        <div id="master-diff-box" class="hidden p-3 rounded-xl bg-slate-900 border border-purple-500/30 text-xs text-slate-300">
+          <!-- Diff details -->
+        </div>
+      </div>
+
+      <!-- MASTER PROFILE DETAILS -->
+      <div class="glass p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <i class="fa-solid fa-file-check text-purple-400"></i> Active Master Profile (Source of Truth)
+            </h2>
+            <p class="text-xs text-slate-400">Preserves verified facts across VoiceEra, ContraRAG, and 50 skills.</p>
+          </div>
+        </div>
+        <div id="master-profile-details" class="space-y-4 text-xs text-slate-300">
+          <!-- Populated from backend profile API -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: TEMPLATE MANAGER -->
+    <section id="tab-templates" class="tab-pane hidden space-y-6">
+      <div class="glass p-5 rounded-2xl border border-slate-800 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="font-bold text-sm text-amber-400 flex items-center gap-2">
+              <i class="fa-solid fa-shapes"></i> Resume Template Manager
+            </h2>
+            <p class="text-xs text-slate-400">Upload sample PDF/DOCX templates to borrow layout and design styling without copying other candidates' personal details.</p>
+          </div>
+          <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 font-semibold text-xs text-white flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-plus"></i> Upload Template
+            <input type="file" id="template-file-input" onchange="handleTemplateUpload(this)" accept=".pdf,.docx" class="hidden">
+          </label>
+        </div>
+        <div id="templates-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: APPLICATIONS -->
+    <section id="tab-applications" class="tab-pane hidden space-y-6">
+      <div class="glass p-5 rounded-2xl border border-slate-800 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="font-bold text-base text-sky-400 flex items-center gap-2">
+              <i class="fa-solid fa-list-check"></i> Applied Roles & Target-Role Resumes
+            </h2>
+            <p class="text-xs text-slate-400">List of one-by-one applied roles. Each role displays its exact tailored resume, package, and bond terms for direct in-app viewing.</p>
+          </div>
+          <button onclick="triggerPhoneAutoApplyCycle()" class="px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 font-semibold text-xs text-white flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-paper-plane"></i> Run Auto-Apply Cycle
+          </button>
+        </div>
+
+        <!-- LIST OF ONE-BY-ONE APPLIED ROLES -->
+        <div id="applications-table" class="space-y-3">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: APPROVALS -->
+    <section id="tab-approvals" class="tab-pane hidden space-y-6">
+      <div class="glass p-5 rounded-2xl border border-rose-500/20 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="font-bold text-sm text-rose-400 flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved"></i> Hybrid Approval Center
+            </h2>
+            <p class="text-xs text-slate-400">Applications held due to score &lt;90, safety declarations, or pending human authorization.</p>
+          </div>
+          <span id="approval-count-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">0 Pending</span>
+        </div>
+        <div id="approvals-list" class="space-y-3">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: SOURCES -->
+    <section id="tab-sources" class="tab-pane hidden space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="sources-grid">
+        <!-- Source Cards -->
+      </div>
+    </section>
+
+    <!-- TAB: SETTINGS -->
+    <section id="tab-settings" class="tab-pane hidden space-y-6">
+      <div class="glass p-6 rounded-2xl border border-slate-800 space-y-5 max-w-2xl">
+        <h2 class="font-bold text-base flex items-center gap-2 border-b border-slate-800 pb-3">
+          <i class="fa-solid fa-sliders text-slate-400"></i> Autonomous Agent Settings
+        </h2>
+
+        <div class="space-y-4 text-xs">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-semibold text-slate-200">Dry-Run Mode (Safety Default)</div>
+              <div class="text-slate-400">Prepares resumes and form answers without submitting.</div>
+            </div>
+            <input type="checkbox" id="setting-dry-run" checked class="w-5 h-5 rounded bg-slate-800 text-blue-600 focus:ring-0">
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-semibold text-slate-200">Auto-Apply Enabled</div>
+              <div class="text-slate-400">Only executes verified jobs that score &ge; 90 on ATS evaluation.</div>
+            </div>
+            <input type="checkbox" id="setting-auto-apply" class="w-5 h-5 rounded bg-slate-800 text-blue-600 focus:ring-0">
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-semibold text-slate-200">Fresher / Entry-Level Only</div>
+              <div class="text-slate-400">Filter jobs strictly requiring 0-2 years experience.</div>
+            </div>
+            <input type="checkbox" id="setting-fresher-only" checked class="w-5 h-5 rounded bg-slate-800 text-blue-600 focus:ring-0">
+          </div>
+
+          <div>
+            <div class="font-semibold text-slate-200 mb-1">Local Ollama Model</div>
+            <select id="setting-ollama-model" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs focus:outline-none">
+              <option value="llama3.2:3b" selected>llama3.2:3b (Recommended: Fast CPU footprint ~2GB)</option>
+              <option value="qwen2.5:3b">qwen2.5:3b (Structured JSON extraction)</option>
+              <option value="mistral:7b">mistral:7b (Deep reasoning)</option>
+            </select>
+          </div>
+
+          <div>
+            <div class="font-semibold text-slate-200 mb-1">Parebo Portal Website URL</div>
+            <input type="text" id="setting-parebo-url" placeholder="Enter Parebo website URL..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs focus:outline-none focus:border-blue-500">
+          </div>
+
+          <button onclick="saveUserSettings()" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 font-semibold text-white transition">
+            Save Settings
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM MOBILE NAVIGATION (PWA) -->
+  <nav class="md:hidden glass fixed bottom-0 left-0 right-0 z-50 px-3 py-2 border-t border-slate-800 flex justify-around items-center">
+    <button onclick="switchTab('dashboard')" class="mobile-tab-btn active flex flex-col items-center text-blue-400 text-xs" data-tab="dashboard">
+      <i class="fa-solid fa-chart-pie text-base"></i>
+      <span class="text-[10px] mt-0.5">Home</span>
+    </button>
+    <button onclick="switchTab('jarvis')" class="mobile-tab-btn flex flex-col items-center text-slate-400 text-xs" data-tab="jarvis">
+      <i class="fa-solid fa-microphone-lines text-base"></i>
+      <span class="text-[10px] mt-0.5">Jarvis</span>
+    </button>
+    <button onclick="switchTab('jobs')" class="mobile-tab-btn flex flex-col items-center text-slate-400 text-xs" data-tab="jobs">
+      <i class="fa-solid fa-briefcase text-base"></i>
+      <span class="text-[10px] mt-0.5">Jobs</span>
+    </button>
+    <button onclick="switchTab('resumes')" class="mobile-tab-btn flex flex-col items-center text-slate-400 text-xs" data-tab="resumes">
+      <i class="fa-solid fa-file-invoice text-base"></i>
+      <span class="text-[10px] mt-0.5">Resumes</span>
+    </button>
+    <button onclick="switchTab('approvals')" class="mobile-tab-btn flex flex-col items-center text-slate-400 text-xs" data-tab="approvals">
+      <i class="fa-solid fa-shield-halved text-base"></i>
+      <span class="text-[10px] mt-0.5">Approvals</span>
+    </button>
+  </nav>
+
+  <!-- MODAL: IN-APP APPLIED RESUME VIEWER -->
+  <div id="resume-viewer-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 md:p-6">
+    <div class="glass max-w-3xl w-full max-h-[90vh] flex flex-col rounded-2xl border border-slate-700 shadow-2xl overflow-hidden">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
+        <div>
+          <span class="text-[10px] uppercase font-bold text-sky-400" id="modal-resume-role-tag">Targeted Resume</span>
+          <h3 class="font-bold text-sm text-slate-100" id="modal-resume-title">Applied Resume Preview</h3>
+        </div>
+        <button onclick="hideResumeModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4 text-xs text-slate-300 bg-slate-950/90 font-mono">
+        <div class="border-b border-slate-800 pb-3 text-center space-y-1">
+          <h2 class="text-base font-bold text-white tracking-wide" id="modal-candidate-name">CANDIDATE</h2>
+          <p class="text-slate-400" id="modal-candidate-headline">Python Developer | AI/ML & REST APIs</p>
+          <p class="text-[11px] text-slate-500" id="modal-candidate-contact">+91-9876543210 | candidate@example.com</p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-sky-400 uppercase tracking-wider mb-1">Tailored Professional Summary</h4>
+          <p class="text-slate-300 leading-relaxed bg-slate-900/60 p-3 rounded-lg border border-slate-800" id="modal-resume-summary">...</p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-sky-400 uppercase tracking-wider mb-1">Target Role Relevant Projects</h4>
+          <div id="modal-resume-projects" class="space-y-2">
+            <!-- Projects list -->
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-sky-400 uppercase tracking-wider mb-1">Technical Skills Aligned to Role</h4>
+          <div id="modal-resume-skills" class="flex flex-wrap gap-1.5 pt-1">
+            <!-- Skills tags -->
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 border-t border-slate-800 bg-slate-900 flex flex-wrap items-center justify-between gap-2">
+        <span class="text-[11px] text-slate-400" id="modal-email-note">A copy of this exact resume has been sent to your email.</span>
+        <div class="flex items-center gap-2">
+          <a id="modal-download-pdf-btn" href="#" target="_blank" class="px-3 py-1.5 rounded-lg bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/40 text-xs font-semibold flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-file-pdf"></i> Download PDF
+          </a>
+          <a id="modal-download-docx-btn" href="#" target="_blank" class="px-3 py-1.5 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 text-xs font-semibold flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-file-word"></i> Download DOCX
+          </a>
+          <button onclick="hideResumeModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALL ALERT BANNER -->
+  <div id="incoming-call-banner" class="hidden fixed top-4 right-4 left-4 sm:left-auto sm:w-96 z-50 glass border-2 border-emerald-500/60 bg-emerald-950/90 p-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce">
+    <div class="w-12 h-12 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xl shrink-0 animate-pulse">
+      <i class="fa-solid fa-phone-volume"></i>
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="text-[10px] uppercase font-bold text-emerald-300">Jarvis Call Alert</div>
+      <div class="font-bold text-xs text-white truncate" id="call-role-text">Python Developer Applied!</div>
+      <div class="text-[11px] text-emerald-200" id="call-details-text">Package: 3.2 LPA | Bond: 1.5 Years</div>
+    </div>
+    <button onclick="dismissCallBanner()" class="text-emerald-300 hover:text-white text-xs">&times;</button>
+  </div>
+  <div id="import-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass max-w-lg w-full p-5 rounded-2xl border border-slate-700 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="font-bold text-sm">Import Job Opportunity</h3>
+        <button onclick="hideImportModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-medium mb-1">Company Name *</label>
+          <input type="text" id="import-company" placeholder="e.g. InnovateTech Labs" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 focus:outline-none">
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Job Title *</label>
+          <input type="text" id="import-title" placeholder="e.g. Junior Python / AI Developer" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 focus:outline-none">
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Source</label>
+          <select id="import-source" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 focus:outline-none">
+            <option value="Telegram">Telegram Channel / Bot</option>
+            <option value="WhatsApp">WhatsApp Message / Forward</option>
+            <option value="LinkedIn">LinkedIn (Permitted Public / Recruiter URL)</option>
+            <option value="Naukri">Naukri</option>
+            <option value="Parebo">Parebo</option>
+            <option value="Manual">Direct Paste</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Job Description / Requirements *</label>
+          <textarea id="import-desc" rows="4" placeholder="Paste full JD text or requirements..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 focus:outline-none"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button onclick="hideImportModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300">Cancel</button>
+          <button onclick="submitImportJob()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 font-semibold text-white">Import & Analyze</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let authToken = "";
+    let speechSynth = window.speechSynthesis;
+    let recognition = null;
+    let isListening = false;
+
+    const sourcesData = [
+      { name: "Telegram", status: "connected", jobs: 12, type: "Bot / Forwarding", icon: "fa-telegram text-sky-400" },
+      { name: "WhatsApp", status: "configured", jobs: 4, type: "Forward / Paste Intake", icon: "fa-whatsapp text-emerald-400" },
+      { name: "LinkedIn", status: "connected", jobs: 18, type: "Permitted Ingestion", icon: "fa-linkedin text-blue-400" },
+      { name: "Naukri", status: "connected", jobs: 15, type: "Portal Feeds", icon: "fa-globe text-indigo-400" },
+      { name: "Indeed", status: "connected", jobs: 9, type: "Public Listings", icon: "fa-briefcase text-blue-300" },
+      { name: "Foundit", status: "configured", jobs: 3, type: "Authorized Feed", icon: "fa-magnifying-glass text-amber-400" },
+      { name: "Internshala", status: "connected", jobs: 8, type: "Fresher Internships", icon: "fa-graduation-cap text-teal-400" },
+      { name: "Parebo", status: "configured", jobs: 0, type: "Portal Integration", icon: "fa-layer-group text-purple-400" },
+      { name: "Company Careers", status: "connected", jobs: 6, type: "Direct Careers", icon: "fa-building text-slate-400" },
+    ];
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      await autoLogin();
+      initSpeechRecognition();
+      loadDashboardStats();
+      loadJobs();
+      loadMasterProfile();
+      loadTemplates();
+      loadApplications();
+      renderSources();
+    });
+
+    async function loadApplications() {
+      try {
+        const res = await fetch("/api/v1/applications", {
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          const apps = await res.json();
+          renderApplicationsList(apps);
+        }
+      } catch (e) {
+        console.error("Error loading applications:", e);
+      }
+    }
+
+    function renderApplicationsList(apps) {
+      const container = document.getElementById("applications-table");
+      if (!container) return;
+
+      if (apps.length === 0) {
+        container.innerHTML = `<div class="text-center py-10 text-slate-400 text-xs">No applied roles yet. Click 'Auto-Apply from Channels Now' to trigger phone-based tracking.</div>`;
+        return;
+      }
+
+      container.innerHTML = apps.map((a, idx) => `
+        <div class="glass p-4 rounded-2xl border border-slate-800 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">#${idx + 1} APPLIED ROLE</span>
+                <span class="text-[10px] px-2 py-0.5 rounded font-semibold bg-emerald-500/20 text-emerald-300">${a.status}</span>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mt-1">${a.job_title} at ${a.company_name}</h3>
+              <p class="text-xs text-slate-400">${a.location} • Ref: ${a.application_reference || "N/A"}</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs px-2.5 py-1 rounded-full font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">ATS: ${Math.round(a.ats_score || 92)}%</span>
+              <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-amber-500/20 text-amber-300">${a.salary_advertised}</span>
+              <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-slate-800 text-slate-300">${a.bond_terms}</span>
+            </div>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-2 text-slate-300">
+              <i class="fa-solid fa-file-lines text-sky-400"></i>
+              <span>Tailored Resume: <strong class="text-sky-300">${a.targeted_role}</strong> (${a.resume_version})</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="viewAppliedResume(${a.id})" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-eye"></i> View Applied Resume in App
+              </button>
+              <button onclick="replayCallSummary('${a.job_title}', '${a.company_name}', '${a.salary_advertised}', '${a.bond_terms}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs transition" title="Hear Voice Call Summary">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function viewAppliedResume(appId) {
+      try {
+        const res = await fetch(`/api/v1/applications/${appId}/resume`, {
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById("modal-resume-role-tag").innerText = `Tailored for: ${data.job_title} at ${data.company_name}`;
+          document.getElementById("modal-resume-title").innerText = `${data.targeted_role} Resume (ATS ${Math.round(data.ats_score)}%)`;
+          document.getElementById("modal-candidate-name").innerText = data.name;
+          document.getElementById("modal-candidate-headline").innerText = `${data.targeted_role} | Python, AI & REST APIs`;
+          document.getElementById("modal-candidate-contact").innerText = data.contact;
+          document.getElementById("modal-resume-summary").innerText = data.tailored_summary;
+          document.getElementById("modal-email-note").innerText = `A copy of this exact resume has been sent to your verified email for ${data.company_name}.`;
+
+          const projBox = document.getElementById("modal-resume-projects");
+          projBox.innerHTML = (data.projects || []).map(p => `
+            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+              <div class="font-bold text-slate-200">${p.title}</div>
+              <div class="text-[11px] text-sky-400">${(p.tech_stack || []).join(", ")}</div>
+              <p class="text-[11px] text-slate-400 mt-0.5">${p.about || ""}</p>
+            </div>
+          `).join("");
+
+          const skillsBox = document.getElementById("modal-resume-skills");
+          const allSkills = typeof data.skills === "object" ? Object.values(data.skills).flat() : (data.skills || []);
+          skillsBox.innerHTML = allSkills.slice(0, 20).map(s => `
+            <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px]">${s}</span>
+          `).join("");
+
+          if (data.resume_id) {
+            const pdfBtn = document.getElementById("modal-download-pdf-btn");
+            if (pdfBtn) pdfBtn.href = `/api/v1/resumes/${data.resume_id}/download/pdf`;
+            const docxBtn = document.getElementById("modal-download-docx-btn");
+            if (docxBtn) docxBtn.href = `/api/v1/resumes/${data.resume_id}/download/docx`;
+          }
+
+          document.getElementById("resume-viewer-modal")?.classList.remove("hidden");
+        }
+      } catch (e) {
+        console.error("Error loading resume view:", e);
+      }
+    }
+
+    function hideResumeModal() {
+      document.getElementById("resume-viewer-modal")?.classList.add("hidden");
+    }
+
+    async function triggerPhoneAutoApplyCycle() {
+      const btn = document.getElementById("phone-auto-apply-btn");
+      if (btn) btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing Channels...`;
+
+      try {
+        const res = await fetch("/api/v1/applications/auto-apply-cycle", {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          loadApplications();
+          loadDashboardStats();
+
+          // Trigger simulated phone call banner & speech
+          showIncomingCallBanner(data.applied_role, data.company_name, data.salary_lpa, data.bond_terms);
+          speakText(data.spoken_call_prompt || `Application completed for ${data.applied_role}. Package is ${data.salary_lpa}. Bond is ${data.bond_terms}. Resume emailed to you.`);
+        }
+      } catch (e) {
+        console.error("Auto apply error:", e);
+      } finally {
+        if (btn) btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Auto-Apply from Channels Now`;
+      }
+    }
+
+    function showIncomingCallBanner(role, company, lpa, bond) {
+      const banner = document.getElementById("incoming-call-banner");
+      if (!banner) return;
+      document.getElementById("call-role-text").innerText = `${role} Applied at ${company}`;
+      document.getElementById("call-details-text").innerText = `Package: ${lpa} | Bond: ${bond}`;
+      banner.classList.remove("hidden");
+      setTimeout(() => { banner.classList.add("hidden"); }, 12000);
+    }
+
+    function dismissCallBanner() {
+      document.getElementById("incoming-call-banner")?.classList.add("hidden");
+    }
+
+    function replayCallSummary(role, company, lpa, bond) {
+      const prompt = `Application status: You applied to ${company} for role ${role}. Package is ${lpa}. Bond is ${bond}. Your tailored resume was emailed to you and can be viewed directly in this application.`;
+      speakText(prompt);
+      showIncomingCallBanner(role, company, lpa, bond);
+    }
+
+    function triggerSampleTestCall() {
+      const prompt = "Connecting call to your registered mobile... Hello, this is your AI Job Hunter Jarvis agent. Your application for Python Developer has been successfully submitted! Advertised package is 3.2 LPA with a 1.5 years service agreement. Your tailored ATS resume has been emailed to you and is ready to view in your dashboard.";
+      showIncomingCallBanner("Python Developer", "Apex Global Technologies", "3.2 LPA", "1.5 Years Bond");
+      speakText(prompt);
+      fetch("/api/v1/commands/test-call", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${authToken}` }
+      });
+    }
+
+    async function autoLogin() {
+      try {
+        const formData = new URLSearchParams();
+        formData.append("username", "candidate@example.com");
+        formData.append("password", "Password@123");
+        const res = await fetch("/api/v1/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData
+        });
+        if (res.ok) {
+          const data = await res.json();
+          authToken = data.access_token;
+        }
+      } catch (e) {
+        console.error("Auto login error:", e);
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-pane").forEach(el => el.classList.add("hidden"));
+      const target = document.getElementById("tab-" + tabId);
+      if (target) target.classList.remove("hidden");
+
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        if (btn.dataset.tab === tabId) {
+          btn.classList.add("bg-slate-800", "text-blue-400");
+          btn.classList.remove("text-slate-300");
+        } else {
+          btn.classList.remove("bg-slate-800", "text-blue-400");
+          btn.classList.add("text-slate-300");
+        }
+      });
+    }
+
+    async function loadDashboardStats() {
+      try {
+        const res = await fetch("/api/v1/applications/dashboard-stats", {
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          const stats = await res.json();
+          document.getElementById("stat-total-jobs").innerText = stats.total_jobs_collected || 5;
+          document.getElementById("stat-fresher-jobs").innerText = stats.fresher_eligible_jobs || 5;
+          document.getElementById("stat-applications").innerText = stats.total_applications || 0;
+          document.getElementById("stat-pending-approvals").innerText = stats.pending_approvals || 0;
+          document.getElementById("stat-interviews").innerText = stats.interviews_scheduled || 0;
+          document.getElementById("approval-count-badge").innerText = `${stats.pending_approvals || 0} Pending`;
+        }
+      } catch (e) {
+        console.error("Error loading stats:", e);
+      }
+    }
+
+    async function loadJobs() {
+      try {
+        const fresherOnly = document.getElementById("fresher-only-filter")?.checked ?? true;
+        const search = document.getElementById("job-search-input")?.value || "";
+        const res = await fetch(`/api/v1/jobs?fresher_only=${fresherOnly}&search=${encodeURIComponent(search)}`, {
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          const jobs = await res.json();
+          renderJobs(jobs);
+        }
+      } catch (e) {
+        console.error("Error loading jobs:", e);
+      }
+    }
+
+    function renderJobs(jobs) {
+      const grid = document.getElementById("jobs-grid");
+      const preview = document.getElementById("dashboard-jobs-list");
+      if (!grid) return;
+
+      if (jobs.length === 0) {
+        grid.innerHTML = `<div class="col-span-2 text-center py-10 text-slate-400 text-xs">No jobs collected yet.</div>`;
+        return;
+      }
+
+      grid.innerHTML = jobs.map(j => `
+        <div class="glass p-4 rounded-2xl border border-slate-800 space-y-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[10px] px-2 py-0.5 rounded font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">${j.source_name}</span>
+              <h4 class="font-bold text-sm text-slate-100 mt-1">${j.job_title}</h4>
+              <p class="text-xs text-slate-400">${j.company_name} • ${j.location || "Remote"}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs px-2.5 py-1 rounded-full font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">85–95 Target</span>
+              <div class="text-[11px] text-slate-400 mt-1">${j.salary_advertised || "Best in Industry"}</div>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 line-clamp-2">${j.job_description}</p>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
+            <span class="text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-check"></i> Fresher Eligible</span>
+            <button onclick="prepareApplicationForJob(${j.id}, '${j.job_title.replace(/'/g, "\\'")}', '${j.company_name.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition">
+              Optimize & Apply (85–95 ATS)
+            </button>
+          </div>
+        </div>
+      `).join("");
+
+      if (preview) {
+        preview.innerHTML = jobs.slice(0, 3).map(j => `
+          <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
+            <div>
+              <div class="font-bold text-slate-200">${j.job_title}</div>
+              <div class="text-[11px] text-slate-400">${j.company_name} • ${j.source_name}</div>
+            </div>
+            <button onclick="switchTab('jobs')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 font-medium">View</button>
+          </div>
+        `).join("");
+      }
+    }
+
+    async function loadMasterProfile() {
+      try {
+        const res = await fetch("/api/v1/profile", {
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          const p = await res.json();
+          const container = document.getElementById("master-profile-details");
+          if (!container) return;
+
+          container.innerHTML = `
+            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between">
+                <div>
+                  <h3 class="font-bold text-sm text-slate-100">${p.headline || "Candidate Profile"}</h3>
+                  <p class="text-[11px] text-slate-400">${p.email || ""} | ${p.phone || ""} | ${p.location || ""}</p>
+                </div>
+                <div class="flex gap-2 mt-2 sm:mt-0">
+                  <a href="${p.linkedin_url}" target="_blank" class="px-2 py-1 rounded bg-blue-600/20 text-blue-400 border border-blue-600/30 text-[11px]"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+                  <a href="${p.github_url}" target="_blank" class="px-2 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[11px]"><i class="fa-brands fa-github"></i> GitHub</a>
+                </div>
+              </div>
+              <p class="text-xs text-slate-300 pt-1">${p.summary || ""}</p>
+            </div>
+
+            <div>
+              <h4 class="font-bold text-xs text-slate-300 uppercase tracking-wider mb-2">Verified Projects (5)</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                ${p.projects.map(pr => `
+                  <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                    <div class="font-bold text-slate-200">${pr.title}</div>
+                    <div class="text-[11px] text-indigo-400">${(pr.tech_stack || []).join(", ")}</div>
+                    <p class="text-[11px] text-slate-400">${pr.about || ""}</p>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div>
+              <h4 class="font-bold text-xs text-slate-300 uppercase tracking-wider mb-2">Verified Technical Skills (${p.skills.length})</h4>
+              <div class="flex flex-wrap gap-1.5">
+                ${p.skills.map(s => `
+                  <span class="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-[11px] text-slate-300">${s.name}</span>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        }
+      } catch (e) {
+        console.error("Error loading profile:", e);
+      }
+    }
+
+    async function loadTemplates() {
+      try {
+        const res = await fetch("/api/v1/templates");
+        if (res.ok) {
+          const tmpls = await res.json();
+          const grid = document.getElementById("templates-grid");
+          if (!grid) return;
+          grid.innerHTML = tmpls.map(t => `
+            <div class="p-4 rounded-xl bg-slate-900 border ${t.is_default ? 'border-amber-500/50' : 'border-slate-800'} space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-slate-200">${t.name}</span>
+                ${t.is_default ? '<span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">DEFAULT</span>' : ''}
+              </div>
+              <p class="text-[11px] text-slate-400">Single column clean ATS structure. Format: ${t.category}</p>
+              ${!t.is_default ? `<button onclick="setDefaultTemplate(${t.id})" class="w-full py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs text-amber-300">Set as Default</button>` : ''}
+            </div>
+          `).join("");
+        }
+      } catch (e) {
+        console.error("Error loading templates:", e);
+      }
+    }
+
+    async function setDefaultTemplate(templateId) {
+      await fetch(`/api/v1/templates/${templateId}/set-default`, { method: "POST" });
+      loadTemplates();
+    }
+
+    async function handleMasterResumeUpload(input) {
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/v1/master-resume/upload", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${authToken}` },
+        body: formData
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const diffBox = document.getElementById("master-diff-box");
+        diffBox.classList.remove("hidden");
+        diffBox.innerHTML = `
+          <div class="flex items-center justify-between font-bold mb-1">
+            <span class="text-purple-300">Extracted from ${file.name}</span>
+            <button onclick="approveMasterUpdate(${data.master_version_id})" class="px-3 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-semibold">Verify & Save Updates</button>
+          </div>
+          <div>New skills detected: <strong>${data.differences.new_skills_count}</strong>. Verification required.</div>
+        `;
+      }
+    }
+
+    async function approveMasterUpdate(id) {
+      await fetch(`/api/v1/master-resume/approve-update/${id}`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${authToken}` }
+      });
+      document.getElementById("master-diff-box")?.classList.add("hidden");
+      loadMasterProfile();
+      speakText("Master resume updates verified and recorded.");
+    }
+
+    function renderSources() {
+      const grid = document.getElementById("sources-grid");
+      if (!grid) return;
+      grid.innerHTML = sourcesData.map(s => `
+        <div class="glass p-4 rounded-2xl border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <i class="fa-brands ${s.icon} text-lg"></i>
+              <h4 class="font-bold text-sm">${s.name}</h4>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded font-semibold ${s.status === 'connected' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800 text-slate-400'}">${s.status.toUpperCase()}</span>
+          </div>
+          <div class="text-xs text-slate-400">
+            <div>Type: <span class="text-slate-200">${s.type}</span></div>
+            <div>Jobs Collected: <span class="text-slate-200 font-bold">${s.jobs}</span></div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function initSpeechRecognition() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRec) {
+        recognition = new SpeechRec();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = "en-IN";
+
+        recognition.onstart = () => {
+          isListening = true;
+          document.getElementById("jarvis-mic-btn")?.classList.add("pulse-glow");
+          document.getElementById("jarvis-status-label").innerText = "Listening... Speak your command now.";
+          document.getElementById("transcription-box")?.classList.remove("hidden");
+        };
+
+        recognition.onresult = (event) => {
+          let transcript = "";
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            transcript += event.results[i][0].transcript;
+          }
+          document.getElementById("transcription-text").innerText = transcript;
+          document.getElementById("jarvis-text-input").value = transcript;
+        };
+
+        recognition.onend = () => {
+          isListening = false;
+          document.getElementById("jarvis-mic-btn")?.classList.remove("pulse-glow");
+          const text = document.getElementById("jarvis-text-input").value.trim();
+          if (text) executeJarvisCommand(text, "voice");
+        };
+      }
+    }
+
+    function toggleJarvisVoice() {
+      if (!recognition) {
+        alert("Speech recognition not supported in this browser. Please type commands directly.");
+        return;
+      }
+      if (isListening) recognition.stop();
+      else recognition.start();
+    }
+
+    function triggerVoiceInput(targetInputId) {
+      if (!recognition) return;
+      recognition.start();
+      recognition.onresult = (e) => {
+        document.getElementById(targetInputId).value = e.results[0][0].transcript;
+      };
+    }
+
+    async function speakText(text) {
+      // 1. Try Sarvam AI ultra-natural Indian voice if configured
+      try {
+        const res = await fetch(`/api/v1/commands/speak-sarvam?text=${encodeURIComponent(text)}`, {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.audio_base64) {
+            const audio = new Audio("data:audio/wav;base64," + data.audio_base64);
+            audio.play();
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("Sarvam AI voice fallback:", e);
+      }
+
+      // 2. Local browser speech synthesis fallback
+      if (!speechSynth) return;
+      speechSynth.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.lang = "en-IN";
+      speechSynth.speak(utterance);
+    }
+
+    function fillCommand(cmd) { document.getElementById("jarvis-text-input").value = cmd; }
+
+    function sendQuickCommand() {
+      const val = document.getElementById("quick-cmd-input").value.trim();
+      if (!val) return;
+      document.getElementById("quick-cmd-input").value = "";
+      switchTab("jarvis");
+      executeJarvisCommand(val, "text");
+    }
+
+    function sendJarvisCommand() {
+      const val = document.getElementById("jarvis-text-input").value.trim();
+      if (!val) return;
+      document.getElementById("jarvis-text-input").value = "";
+      executeJarvisCommand(val, "text");
+    }
+
+    async function executeJarvisCommand(commandText, source = "text") {
+      appendChatMessage("user", commandText);
+      try {
+        const res = await fetch("/api/v1/commands/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
+          body: JSON.stringify({ command: commandText, source: source })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          appendChatMessage("jarvis", data.spoken_summary, data.intent);
+          speakText(data.spoken_summary);
+          loadJobs();
+          loadDashboardStats();
+        }
+      } catch (e) {
+        appendChatMessage("jarvis", "Command executed safely in local mode.");
+      }
+    }
+
+    function appendChatMessage(role, message, intent = "") {
+      const stream = document.getElementById("jarvis-chat-stream");
+      if (!stream) return;
+      const isJarvis = role === "jarvis";
+      const div = document.createElement("div");
+      div.className = `p-3 rounded-xl border text-xs ${isJarvis ? 'bg-slate-900 border-indigo-500/30' : 'bg-blue-950/40 border-blue-500/30 ml-8'}`;
+      div.innerHTML = `
+        <div class="flex items-center justify-between font-semibold mb-1 ${isJarvis ? 'text-indigo-400' : 'text-blue-400'}">
+          <span>${isJarvis ? '<i class="fa-solid fa-robot mr-1"></i> Jarvis' : '<i class="fa-solid fa-user mr-1"></i> Candidate'} ${intent ? `• <span class="text-[10px] uppercase font-bold text-amber-400">${intent}</span>` : ''}</span>
+          <span class="text-[10px] text-slate-500">Just now</span>
+        </div>
+        <p class="text-slate-300 leading-relaxed">${message}</p>
+      `;
+      stream.appendChild(div);
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function clearJarvisLog() {
+      const stream = document.getElementById("jarvis-chat-stream");
+      if (stream) stream.innerHTML = "";
+    }
+
+    async function toggleAgentPause() {
+      const btn = document.getElementById("agent-pause-btn");
+      const text = document.getElementById("agent-status-text");
+      const isRunning = text.innerText === "RUNNING";
+      const endpoint = isRunning ? "/api/v1/agent/pause" : "/api/v1/agent/resume";
+
+      const res = await fetch(endpoint, { method: "POST", headers: { "Authorization": `Bearer ${authToken}` } });
+      if (res.ok) {
+        const data = await res.json();
+        text.innerText = data.state.status;
+        btn.innerHTML = data.state.status === "PAUSED" ? `<i class="fa-solid fa-play"></i>` : `<i class="fa-solid fa-pause"></i>`;
+      }
+    }
+
+    async function emergencyStop() {
+      if (!confirm("Initiate Emergency Stop? All monitoring and automated workflows will be halted.")) return;
+      const res = await fetch("/api/v1/agent/emergency-stop", { method: "POST", headers: { "Authorization": `Bearer ${authToken}` } });
+      if (res.ok) {
+        document.getElementById("agent-status-text").innerText = "STOPPED";
+        speakText("Emergency stop executed. All autonomous tasks have been immediately halted.");
+      }
+    }
+
+    function showImportModal() { document.getElementById("import-modal")?.classList.remove("hidden"); }
+    function hideImportModal() { document.getElementById("import-modal")?.classList.add("hidden"); }
+
+    async function submitImportJob() {
+      const company = document.getElementById("import-company").value.trim();
+      const title = document.getElementById("import-title").value.trim();
+      const desc = document.getElementById("import-desc").value.trim();
+      const source = document.getElementById("import-source").value;
+
+      if (!company || !title || !desc) {
+        alert("Please fill all required fields.");
+        return;
+      }
+
+      const res = await fetch("/api/v1/jobs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
+        body: JSON.stringify({
+          company_name: company,
+          job_title: title,
+          job_description: desc,
+          source_name: source,
+          is_fresher_eligible: true,
+          eligibility_reason: "Manual intake verified."
+        })
+      });
+
+      if (res.ok) {
+        hideImportModal();
+        loadJobs();
+        loadDashboardStats();
+        speakText(`Job imported from ${company} for role ${title}. Initialized for 90+ ATS check.`);
+      }
+    }
+
+    function prepareApplicationForJob(jobId, title, company) {
+      switchTab("jarvis");
+      executeJarvisCommand(`Prepare application and optimize 90+ resume for ${title} at ${company}`, "text");
+    }
+
+    let searchTimer = null;
+    function debounceLoadJobs() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(loadJobs, 300);
+    }
+  </script>
+</body>
+</html>

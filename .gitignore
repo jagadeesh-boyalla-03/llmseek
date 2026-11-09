@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Database & runtime files
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment & credentials
+.env
+.env.local
+
+# Testing & logs
+.pytest_cache/
+*.log
+
+# Generated runtime documents
+storage/generated_resumes/*
+!storage/generated_resumes/.gitkeep
+
+# Antigravity & OS files
+.DS_Store
+Thumbs.db

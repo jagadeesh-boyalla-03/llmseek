@@ -1,0 +1,145 @@
+{
+  "personal_info": {
+    "name": "Candidate",
+    "headline": "Application Engineer (AI/ML) | Python, Machine Learning, Deep Learning, NLP",
+    "phone": "+91-9876543210",
+    "email": "candidate@example.com",
+    "linkedin": "https://linkedin.com/in/candidate",
+    "github": "https://github.com/candidate",
+    "location": "Hyderabad, India"
+  },
+  "summary": "2026 B.Tech fresher in Artificial Intelligence and Machine Learning (CGPA 7.5/10) with strong Python skills (NumPy, pandas, matplotlib, scikit-learn, PyTorch/TensorFlow) and hands-on experience across internships and projects, building NLP classification, speech AI and LLM-based applications, with REST APIs for integrating models into existing products. Seeking an Application Engineer - AI/ML role.",
+  "education": [
+    {
+      "degree": "B.Tech, Artificial Intelligence and Machine Learning",
+      "institution": "Engineering College",
+      "location": "Andhra Pradesh",
+      "cgpa": "7.5/10",
+      "graduation_year": 2026
+    }
+  ],
+  "technical_skills": {
+    "languages": ["Python", "SQL", "Java", "JavaScript", "C", "HTML5", "CSS3"],
+    "data_science_ml": ["NumPy", "pandas", "matplotlib", "scikit-learn", "Deep Learning (PyTorch/TensorFlow)", "Classification"],
+    "ai_ml": ["Machine Learning", "NLP", "Sentiment Analysis", "Entity Extraction", "Generative AI"],
+    "agentic_ai_llms": ["AI Agents", "Agentic AI", "LLMs (Groq)", "Prompt Engineering", "RAG", "MCP", "LangChain", "Speech AI"],
+    "backend": ["REST APIs", "Flask", "FastAPI", "Node.js", "Express.js"],
+    "frontend_db": ["React.js", "Streamlit", "Responsive Web Design", "UI/UX Design", "Figma", "SQL", "PostgreSQL"],
+    "tools_concepts": ["Git", "GitHub", "Docker", "CI/CD", "Postman", "Linux", "VS Code", "System Design", "JWT", "Agile", "Scrum", "TDD"]
+  },
+  "internships": [
+    {
+      "role": "Agentic AI Trainee",
+      "company": "Codegnan",
+      "location": "Hyderabad, India (on-campus)",
+      "period": "Jul 2026 - Present",
+      "highlights": [
+        "Developing Python and Agentic AI projects in voice AI, multilingual NLP and AI agents, including VoiceEra."
+      ]
+    },
+    {
+      "role": "Full Stack Development Intern (Python)",
+      "company": "IIDT",
+      "location": "Remote",
+      "period": "Remote",
+      "highlights": [
+        "Full stack Python development, API engineering, and database management."
+      ]
+    },
+    {
+      "role": "Full Stack Development Intern (Java)",
+      "company": "BlackBucks",
+      "location": "Remote",
+      "period": "Remote",
+      "highlights": [
+        "Java backend development, OOP, and web application architecture."
+      ]
+    },
+    {
+      "role": "Cybersecurity Intern",
+      "company": "BlackBucks",
+      "location": "Remote",
+      "period": "Remote",
+      "highlights": [
+        "Security evaluation, system audits, and safe application practices."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "title": "AI Customer Support Chatbot",
+      "tech_stack": ["Python", "Flask", "NLP", "PostgreSQL"],
+      "about": "NLP-based chatbot that classifies user intent across 20+ categories in real time.",
+      "features": [
+        "Integrated sentiment analysis and entity extraction for context-aware responses.",
+        "Reduced API response time to under 2 seconds through Flask optimisation and caching."
+      ],
+      "links": {
+        "github": "https://github.com/candidate/ML_Chatbot-CustomerService",
+        "live": "https://demo-chatbot.vercel.app"
+      }
+    },
+    {
+      "title": "VoiceEra",
+      "tech_stack": ["Speech AI", "Multilingual NLP", "AI Agents", "REST APIs"],
+      "about": "AI voice platform to create and talk to custom voice agents in 22+ Indian languages, from Hindi and Tamil to Santali, Bodo and Kashmiri.",
+      "features": [
+        "Real-time speech-in/speech-out, code-switched speech, a setup workflow for agent behaviour, instructions and personality, and APIs for integration into existing products.",
+        "Strengthened skills in speech AI pipelines, multilingual NLP, real-time systems and API integration."
+      ],
+      "links": {
+        "github": "https://github.com/candidate/agent_call",
+        "live": "https://demo-aicall.vercel.app"
+      }
+    },
+    {
+      "title": "Personal SIRI",
+      "tech_stack": ["Python", "Streamlit", "Groq LLM", "Speech Recognition", "Text-to-Speech"],
+      "about": "Voice and chat assistant: speech to text, Groq-powered LLM query, and spoken answers.",
+      "features": [
+        "Voice & chat multimodal interaction, speech-to-text, fast LLM inference with Groq, and natural spoken output."
+      ],
+      "links": {
+        "github": "https://github.com/candidate/personal-siri"
+      }
+    },
+    {
+      "title": "Personal Finance & Expense Management System",
+      "tech_stack": ["Python", "OOP", "CSV Handling"],
+      "about": "Python app for end-to-end finance tracking: income, expenses, categories and monthly budgeting.",
+      "features": [
+        "Budget validation, transaction history, category-wise breakdown, savings calculation and highest-expense identification using lists, dictionaries and OOP."
+      ],
+      "links": {
+        "github": "https://github.com/candidate/Personal-Finance-and-Expense-Management-System",
+        "live": "https://demo-finance.streamlit.app"
+      }
+    },
+    {
+      "title": "ContraRAG – Contradiction-Aware Policy Auditor and Temporal Rule Engine",
+      "tech_stack": ["Python", "RAG", "ChromaDB", "FastAPI", "LangChain"],
+      "about": "A system that identifies conflicting and superseded policy documents, tracks chronological amendments, and provides answers supported by authoritative sources and citations.",
+      "features": [
+        "Automated conflict detection across revisions of policy corpora.",
+        "Temporal reasoning over legal and compliance amendments with full source attribution."
+      ],
+      "links": {
+        "github": "https://github.com/candidate/ContraRAG"
+      }
+    }
+  ],
+  "certifications": [
+    { "title": "Python for Data Science & AI", "issuer": "Coursera", "date": "Nov 2023" },
+    { "title": "Generative AI Fundamentals", "issuer": "Oracle", "date": "Sep 2024" },
+    { "title": "Full Stack Web Development", "issuer": "Coursera", "date": "Mar 2024" },
+    { "title": "Java Programming", "issuer": "Oracle Academy", "date": "Jan 2024" }
+  ],
+  "achievements": [
+    "Participated in the College Hackathon 2025, developing a working prototype within 24 hours.",
+    "Solved problems on Arrays, Strings, Patterns, Searching and Sorting on LeetCode, HackerRank and CodeChef.",
+    "Led and managed the college Technical Club, coordinating activities and events for the college."
+  ],
+  "soft_skills": [
+    "Teamwork", "Time management", "Ownership across academics, internships and project deadlines", "Problem solving"
+  ]
+}
