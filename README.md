@@ -3,8 +3,7 @@
 
 An autonomous, multi-agent AI job-hunting platform designed for entry-level / fresher IT candidates. Built for entry-level AI/ML and Python Engineers trained in Applied Agentic AI.
 
----
-
+--
 ### Core Capabilities
 
 1. **Multi-Source Job Ingestion**:
